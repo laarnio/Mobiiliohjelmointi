@@ -1,5 +1,6 @@
 package com.example.laarnio.myapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText firstNumberDiv;
     private EditText secondNumberDiv;
     private TextView divisionResult;
+
+    private List<String> calcLog;
 
 
     @Override
@@ -47,43 +54,71 @@ public class MainActivity extends AppCompatActivity {
         firstNumberDiv = findViewById(R.id.first_div_number);
         secondNumberDiv = findViewById(R.id.second_div_number);
         divisionResult = findViewById(R.id.division_result);
-
+        calcLog = new ArrayList<String>();
     }
 
     public void calculateAddition(View view) {
 
         String firstNumberText = firstNumber.getText().toString();
         String secondNumberText = secondNumber.getText().toString();
-        Integer resultNumber = Integer.parseInt(firstNumberText) + Integer.parseInt(secondNumberText);
-        additionResult.setText(resultNumber.toString());
+        if(firstNumberText.isEmpty() || secondNumberText.isEmpty()) {
+            Toast.makeText(getBaseContext(), "Täytä kentät", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Integer resultNumber = Integer.parseInt(firstNumberText) + Integer.parseInt(secondNumberText);
+            additionResult.setText(resultNumber.toString());
+            String newLog = firstNumberText + "+" + secondNumberText + "=" + resultNumber.toString();
+            calcLog.add(newLog);
+        }
 
     }
 
     public void calculateSubtraction(View view) {
         String firstNumberText = firstNumberSub.getText().toString();
         String secondNumberText = secondNumberSub.getText().toString();
-        Integer resultNumber = Integer.parseInt(firstNumberText) - Integer.parseInt(secondNumberText);
-        substractionResult.setText(resultNumber.toString());
+        if(firstNumberText.isEmpty() || secondNumberText.isEmpty()) {
+            Toast.makeText(getBaseContext(), "Täytä kentät", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Integer resultNumber = Integer.parseInt(firstNumberText) - Integer.parseInt(secondNumberText);
+            substractionResult.setText(resultNumber.toString());
+            String newLog = firstNumberText + "-" + secondNumberText + "=" + resultNumber.toString();
+            calcLog.add(newLog);
+        }
     }
 
     public void calculateMultiplication(View view) {
         String firstNumberText = firstNumberMp.getText().toString();
         String secondNumberText = secondNumberMp.getText().toString();
-        Integer resultNumber = Integer.parseInt(firstNumberText) * Integer.parseInt(secondNumberText);
-        multiplicationResult.setText(resultNumber.toString());
+        if(firstNumberText.isEmpty() || secondNumberText.isEmpty()) {
+            Toast.makeText(getBaseContext(), "Täytä kentät", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Integer resultNumber = Integer.parseInt(firstNumberText) * Integer.parseInt(secondNumberText);
+            multiplicationResult.setText(resultNumber.toString());
+            String newLog = firstNumberText + "*" + secondNumberText + "=" + resultNumber.toString();
+            calcLog.add(newLog);
+        }
     }
 
     public void calculateDivision(View view) {
         String firstNumberText = firstNumberDiv.getText().toString();
         String secondNumberText = secondNumberDiv.getText().toString();
-        Double resultNumber = Double.parseDouble(firstNumberText) / Double.parseDouble(secondNumberText);
-        if (resultNumber.isInfinite()) {
-            Toast.makeText(getBaseContext(), "Cannot divide by zero", Toast.LENGTH_SHORT).show();
-            firstNumberDiv.setText("");
-            secondNumberDiv.setText("");
+        if(firstNumberText.isEmpty() || secondNumberText.isEmpty()) {
+            Toast.makeText(getBaseContext(), "Täytä kentät", Toast.LENGTH_SHORT).show();
         }
         else {
-            divisionResult.setText(resultNumber.toString());
+            Double resultNumber = Double.parseDouble(firstNumberText) / Double.parseDouble(secondNumberText);
+            if (resultNumber.isInfinite()) {
+                Toast.makeText(getBaseContext(), "Ei voida jakaa nollalla", Toast.LENGTH_SHORT).show();
+                firstNumberDiv.setText("");
+                secondNumberDiv.setText("");
+                divisionResult.setText("0");
+            } else {
+                divisionResult.setText(resultNumber.toString());
+                String newLog = firstNumberText + "/" + secondNumberText + "=" + resultNumber.toString();
+                calcLog.add(newLog);
+            }
         }
     }
 
@@ -105,6 +140,12 @@ public class MainActivity extends AppCompatActivity {
         secondNumberDiv.setText("0");
         divisionResult.setText("0");
 
+    }
+
+    public void showLog(View view) {
+        Intent intent = new Intent(this, LogActivity.class);
+        intent.putStringArrayListExtra("laskut", (ArrayList<String>) calcLog);
+        startActivity(intent);
     }
 
 }
